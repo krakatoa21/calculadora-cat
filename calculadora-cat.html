@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de CAT · MoradaUno</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #671e75;
+      --purple-light: #772583;
+      --purple-mid:   #b14eb5;
+      --purple-pale:  #f5edf7;
+      --purple-mid2:  #ede0ef;
+      --text:         #1a1a2e;
+      --muted:        #6b7280;
+      --border:       #e5e7eb;
+      --white:        #ffffff;
+      --card-shadow:  0 2px 14px rgba(103,30,117,.10);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f3fa;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px 16px 56px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .logo-wrap svg {
+      height: 36px;
+      width: auto;
+    }
+    .header h1 {
+      font-size: 1.1rem; font-weight: 600; color: var(--text);
+      margin-bottom: 4px;
+    }
+    .header p { font-size: .85rem; color: var(--muted); }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 22px 24px;
+      box-shadow: var(--card-shadow);
+    }
+    .card-title {
+      font-size: .7rem; font-weight: 700; letter-spacing: .09em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── INPUTS ── */
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block; font-size: .875rem; font-weight: 600;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .field label .sub {
+      font-weight: 400; font-size: .78rem; color: var(--muted);
+    }
+    .field input[type="number"] {
+      width: 100%; padding: 10px 14px;
+      border: 2px solid var(--border); border-radius: 10px;
+      font-size: 1rem; color: var(--text);
+      outline: none; transition: border-color .2s;
+      background: var(--white);
+    }
+    .field input[type="number"]:focus { border-color: var(--purple-light); }
+
+    /* Slider */
+    .slider-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .slider-row input[type="range"] {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 6px; border-radius: 3px;
+      background: var(--purple-pale);
+      outline: none; cursor: pointer;
+    }
+    .slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--purple); cursor: pointer;
+      box-shadow: 0 2px 6px rgba(103,30,117,.35);
+    }
+    .slider-row input[type="range"]::-moz-range-thumb {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--purple); cursor: pointer; border: none;
+    }
+    .slider-val {
+      min-width: 28px; text-align: center;
+      font-size: 1.1rem; font-weight: 700; color: var(--purple);
+    }
+    .slider-labels {
+      display: flex; justify-content: space-between;
+      font-size: .7rem; color: var(--muted); margin-top: 4px;
+      padding: 0 2px;
+    }
+
+    /* Fixed commission badge */
+    .commission-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--purple-pale); border: 1.5px solid #d8a8e0;
+      border-radius: 8px; padding: 8px 14px;
+      font-size: .95rem; font-weight: 700; color: var(--purple);
+    }
+    .commission-badge .lock { font-size: .85rem; opacity: .65; }
+
+    /* ── CAT COMPACT CARD ── */
+    .cat-card {
+      background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 60%, #9c3aaa 100%);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 18px rgba(103,30,117,.28);
+    }
+    .cat-left { flex: 1; }
+    .cat-label-top {
+      font-size: .68rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: rgba(255,255,255,.7);
+      margin-bottom: 2px;
+    }
+    .cat-sublabel {
+      font-size: .75rem; color: rgba(255,255,255,.55); margin-top: 4px;
+      line-height: 1.4;
+    }
+    .cat-right {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .cat-value {
+      font-size: 2.6rem; font-weight: 800; line-height: 1;
+      letter-spacing: -1.5px; color: #fff;
+    }
+    .cat-pct {
+      font-size: 1.3rem; font-weight: 700; color: rgba(255,255,255,.8);
+      align-self: flex-start; padding-top: 4px;
+    }
+    @media (max-width: 420px) {
+      .cat-value { font-size: 2rem; }
+      .cat-pct { font-size: 1rem; }
+    }
+
+    /* ── 4-CARD SUMMARY GRID ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 420px) {
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+    .metric {
+      background: var(--purple-pale);
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+    .metric-label {
+      font-size: .67rem; font-weight: 700; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--purple); margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 1.15rem; font-weight: 700; color: var(--text);
+      line-height: 1.2;
+    }
+    .metric-sub {
+      font-size: .73rem; color: var(--muted); margin-top: 3px;
+      line-height: 1.4;
+    }
+    /* Commission card spans full width on the 4th slot if needed */
+    .metric-commission .metric-sub {
+      font-size: .72rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-wrap">
+      <!-- Logo oficial MoradaUno (SVG inline) -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683.4 83.54" aria-label="MoradaUno">
+        <defs><style>.m1{fill:#671e75}.m2{fill:#b14eb5}.m3{fill:#772583}</style></defs>
+        <path class="m1" d="m1.21,74.27l39.18-40.22L7.03,1.25C4.44-1.42,0,.47,0,4.24v73.03s.01.09.01.14c-.04-1.09.32-2.22,1.2-3.13"/>
+        <path class="m2" d="m73.75,1.25l-33.36,32.81,39.18,40.22c.88.91,1.24,2.04,1.2,3.13,0-.05.01-.09.01-.14V4.24c0-3.77-4.44-5.66-7.03-2.99"/>
+        <path class="m3" d="m79.57,74.27l-39.18-40.22L1.21,74.27c-.89.91-1.25,2.04-1.2,3.13,0,.18.02.35.05.53.02.11.03.21.06.32.03.13.07.25.11.37.06.19.14.37.22.54.06.11.11.23.18.33.05.09.11.17.17.25.1.14.21.29.34.42.03.04.06.07.1.11.36.36.78.66,1.25.86.03.01.05.02.08.03.2.08.41.15.63.2.05.01.1.03.15.04.24.05.49.08.75.08.01,0,.02,0,.03,0h72.53s.02,0,.03,0c.26,0,.51-.03.75-.08.05,0,.1-.02.15-.04.22-.05.43-.12.63-.2.03-.01.05-.02.08-.03.47-.21.89-.5,1.25-.86.03-.03.06-.07.09-.11.12-.13.23-.27.34-.42.06-.08.12-.17.17-.25.07-.11.12-.22.18-.33.09-.17.16-.35.22-.54.04-.12.08-.25.11-.37.03-.11.04-.21.06-.32.03-.17.05-.35.05-.53.04-1.09-.32-2.22-1.2-3.13"/>
+        <path class="m3" d="m178.54,9.41v70.46c0,.74-.6,1.35-1.35,1.35h-11.98c-.74,0-1.35-.6-1.35-1.35v-39.43c0-1.47-2.03-1.88-2.59-.51l-16.66,40.46c-.21.5-.7.83-1.24.83h-9.31c-.54,0-1.04-.33-1.24-.83l-16.77-40.5c-.56-1.36-2.59-.96-2.59.52v39.47c0,.74-.6,1.35-1.35,1.35h-11.98c-.74,0-1.35-.6-1.35-1.35V9.41c0-.74.6-1.35,1.35-1.35h14.43c.54,0,1.03.32,1.24.82l21.68,50.68c.47,1.09,2.01,1.09,2.48,0l21.68-50.68c.21-.5.7-.82,1.24-.82h14.32c.74,0,1.35.6,1.35,1.35Z"/>
+        <path class="m3" d="m200.55,78.44c-4.47-2.48-7.98-5.99-10.53-10.53-2.55-4.54-3.83-9.78-3.83-15.72s1.31-11.18,3.93-15.72c2.62-4.54,6.2-8.05,10.74-10.53,4.54-2.48,9.61-3.72,15.2-3.72s10.65,1.24,15.2,3.72c4.54,2.48,8.12,5.99,10.74,10.53,2.62,4.54,3.93,9.78,3.93,15.72s-1.34,11.18-4.03,15.72c-2.69,4.54-6.32,8.05-10.9,10.53-4.58,2.48-9.69,3.72-15.35,3.72s-10.62-1.24-15.09-3.72Zm22.59-11c2.34-1.29,4.21-3.23,5.61-5.82,1.4-2.59,2.09-5.73,2.09-9.43,0-5.52-1.45-9.76-4.35-12.73-2.9-2.97-6.45-4.45-10.64-4.45s-7.7,1.49-10.53,4.45c-2.83,2.97-4.25,7.22-4.25,12.73s1.38,9.76,4.14,12.73c2.76,2.97,6.24,4.45,10.43,4.45,2.66,0,5.15-.64,7.49-1.94Z"/>
+        <path class="m3" d="m275.65,24.94c2.67-1.53,5.67-2.39,9.01-2.58.77-.04,1.42.6,1.42,1.37v14.18l-3.88-.19c-4.61,0-8.09,1.08-10.43,3.25-2.34,2.17-3.51,5.94-3.51,11.32v27.58c0,.74-.6,1.35-1.35,1.35h-11.98c-.74,0-1.35-.6-1.35-1.35V24.5c0-.74.6-1.35,1.35-1.35h11.98c.74,0,1.35.6,1.35,1.35v7.67c1.88-3.07,4.35-5.48,7.39-7.23Z"/>
+        <path class="m3" d="m292.52,36.36c2.34-4.54,5.52-8.03,9.54-10.48,4.02-2.44,8.5-3.67,13.47-3.67,4.33,0,8.12.87,11.37,2.62,3.25,1.75,5.85,3.95,7.81,6.6v-6.93c0-.74.6-1.35,1.35-1.35h12.09c.74,0,1.35.6,1.35,1.35v55.37c0,.74-.6,1.35-1.35,1.35h-12.09c-.74,0-1.35-.6-1.35-1.35v-7.14c-1.89,2.73-4.49,4.98-7.81,6.76-3.32,1.78-7.15,2.67-11.48,2.67-4.89,0-9.35-1.26-13.36-3.77-4.02-2.51-7.2-6.06-9.54-10.64-2.34-4.58-3.51-9.83-3.51-15.77s1.17-11.07,3.51-15.62Zm40.09,6.66c-1.4-2.55-3.29-4.51-5.66-5.87-2.38-1.36-4.93-2.04-7.65-2.04s-5.24.66-7.54,1.99c-2.31,1.33-4.18,3.27-5.61,5.82-1.43,2.55-2.15,5.57-2.15,9.07s.72,6.55,2.15,9.17c1.43,2.62,3.32,4.63,5.66,6.03,2.34,1.4,4.84,2.1,7.49,2.1s5.28-.68,7.65-2.04c2.37-1.36,4.26-3.32,5.66-5.87,1.4-2.55,2.09-5.61,2.09-9.17s-.7-6.62-2.09-9.17Z"/>
+        <path class="m3" d="m360.43,36.36c2.34-4.54,5.54-8.03,9.59-10.48,4.07-2.45,8.59-3.68,13.57-3.67,3.44,0,6.89.73,10.03,2.13,3.76,1.68,6.72,3.97,8.88,6.88V5.01c0-.74.6-1.35,1.35-1.35h12.19c.74,0,1.35.6,1.35,1.35v74.86c0,.74-.6,1.35-1.35,1.35h-12.19c-.74,0-1.35-.6-1.35-1.35v-7.25c-1.82,2.87-4.37,5.17-7.65,6.92s-7.09,2.62-11.42,2.62c-4.89,0-9.37-1.26-13.42-3.77-4.05-2.51-7.25-6.06-9.59-10.64-2.34-4.58-3.51-9.83-3.51-15.77s1.17-11.07,3.51-15.62Zm40.09,6.66c-1.4-2.55-3.29-4.51-5.66-5.87-2.38-1.36-4.93-2.04-7.65-2.04s-5.24.66-7.54,1.99c-2.31,1.33-4.18,3.27-5.61,5.82-1.43,2.55-2.15,5.57-2.15,9.07s.72,6.55,2.15,9.17c1.43,2.62,3.32,4.63,5.66,6.03,2.34,1.4,4.84,2.1,7.49,2.1s5.28-.68,7.65-2.04c2.37-1.36,4.26-3.32,5.66-5.87,1.4-2.55,2.09-5.61,2.09-9.17s-.7-6.62-2.09-9.17Z"/>
+        <path class="m3" d="m428.35,36.36c2.34-4.54,5.52-8.03,9.54-10.48,4.02-2.44,8.5-3.67,13.47-3.67,4.33,0,8.12.87,11.37,2.62,3.25,1.75,5.85,3.95,7.81,6.6v-6.93c0-.74.6-1.35,1.35-1.35h12.09c.74,0,1.35.6,1.35,1.35v55.37c0,.74-.6,1.35-1.35,1.35h-12.09c-.74,0-1.35-.6-1.35-1.35v-7.14c-1.89,2.73-4.49,4.98-7.81,6.76-3.32,1.78-7.15,2.67-11.48,2.67-4.89,0-9.35-1.26-13.36-3.77-4.02-2.51-7.2-6.06-9.54-10.64-2.34-4.58-3.51-9.83-3.51-15.77s1.17-11.07,3.51-15.62Zm40.09,6.66c-1.4-2.55-3.29-4.51-5.66-5.87-2.38-1.36-4.93-2.04-7.65-2.04s-5.24.66-7.54,1.99c-2.31,1.33-4.18,3.27-5.61,5.82-1.43,2.55-2.15,5.57-2.15,9.07s.72,6.55,2.15,9.17c1.43,2.62,3.32,4.63,5.66,6.03,2.34,1.4,4.84,2.1,7.49,2.1s5.28-.68,7.65-2.04c2.37-1.36,4.26-3.32,5.66-5.87,1.4-2.55,2.09-5.61,2.09-9.17s-.7-6.62-2.09-9.17Z"/>
+        <path class="m3" d="m505.69,9.75c.55,0,1,.45,1,1v45.22c0,6.5,1.59,11.32,4.77,14.46,3.18,3.14,7.6,4.72,13.26,4.72s9.97-1.57,13.15-4.72c3.18-3.14,4.77-7.97,4.77-14.46V10.76c0-.55.45-1,1-1h7.54c.55,0,1,.45,1,1v45.11c0,6.08-1.22,11.2-3.67,15.35-2.45,4.16-5.75,7.25-9.9,9.27-4.16,2.03-8.82,3.04-13.99,3.04s-9.84-1.01-13.99-3.04c-4.16-2.02-7.44-5.12-9.85-9.27-2.41-4.16-3.62-9.28-3.62-15.35V10.76c0-.55.45-1,1-1h7.54Z"/>
+        <path class="m3" d="m609.93,29.08c4.33,4.23,6.5,10.32,6.5,18.29v32.85c0,.55-.45,1-1,1h-7.43c-.55,0-1-.45-1-1v-31.49c0-5.73-1.43-10.11-4.3-13.15-2.87-3.04-6.78-4.56-11.74-4.56s-9.03,1.57-12,4.72c-2.97,3.14-4.45,7.72-4.45,13.73v30.76c0,.55-.45,1-1,1h-7.54c-.55,0-1-.45-1-1V24.79c0-.55.45-1,1-1h7.54c.55,0,1,.45,1,1v7.17c1.89-2.94,4.45-5.21,7.71-6.81,3.25-1.61,6.83-2.41,10.74-2.41,6.99,0,12.65,2.12,16.98,6.34Z"/>
+        <path class="m3" d="m639.32,78.5c-4.37-2.44-7.79-5.92-10.27-10.43-2.48-4.51-3.72-9.73-3.72-15.67s1.28-11.06,3.83-15.56c2.55-4.51,6.03-7.96,10.43-10.38,4.4-2.41,9.33-3.62,14.78-3.62s10.37,1.2,14.78,3.62c4.4,2.41,7.88,5.85,10.43,10.32,2.55,4.47,3.82,9.68,3.82,15.62s-1.31,11.16-3.93,15.67c-2.62,4.51-6.17,7.98-10.64,10.43-4.47,2.45-9.43,3.67-14.88,3.67s-10.25-1.22-14.62-3.67Zm24.26-7.13c3-1.61,5.43-4.02,7.28-7.23,1.85-3.21,2.78-7.13,2.78-11.74s-.91-8.52-2.73-11.74c-1.82-3.21-4.19-5.61-7.13-7.18-2.94-1.57-6.11-2.36-9.54-2.36s-6.69.79-9.59,2.36c-2.9,1.57-5.22,3.97-6.97,7.18-1.75,3.21-2.62,7.13-2.62,11.74s.85,8.63,2.57,11.84c1.71,3.21,4,5.61,6.87,7.18,2.86,1.57,6.01,2.36,9.43,2.36s6.64-.8,9.64-2.41Z"/>
+      </svg>
+    </div>
+    <h1>Adelanto de Rentas &mdash; Calculadora de CAT</h1>
+    <p>Ingresa los datos del contrato para obtener el CAT sin IVA</p>
+  </div>
+
+  <div class="container">
+
+    <!-- INPUTS -->
+    <div class="card">
+      <div class="card-title">Datos del contrato</div>
+
+      <div class="field">
+        <label for="renta">Renta mensual <span class="sub">MXN</span></label>
+        <input type="number" id="renta" min="1000" step="500" value="19000"
+               placeholder="Ej. 19000" oninput="calculate()" />
+      </div>
+
+      <div class="field">
+        <label for="meses">Meses a adelantar</label>
+        <div class="slider-row">
+          <input type="range" id="meses" min="1" max="6" value="5"
+                 oninput="updateSlider(); calculate()" />
+          <div class="slider-val" id="mesesVal">5</div>
+        </div>
+        <div class="slider-labels">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6 meses</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Comisión por apertura <span class="sub">(fija)</span></label>
+        <div class="commission-badge">
+          <span class="lock">🔒</span> 16% IVA incluido
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT COMPACT -->
+    <div class="cat-card">
+      <div class="cat-left">
+        <div class="cat-label-top">CAT Sin IVA</div>
+        <div class="cat-sublabel">Costo Anual Total</div>
+      </div>
+      <div class="cat-right">
+        <div class="cat-value" id="catValue">—</div>
+        <div class="cat-pct" id="catPct"></div>
+      </div>
+    </div>
+
+    <!-- 4-CARD SUMMARY -->
+    <div class="card" style="padding-bottom:20px;">
+      <div class="card-title">Resumen financiero</div>
+      <div class="summary-grid">
+
+        <div class="metric">
+          <div class="metric-label">Monto total a adelantar</div>
+          <div class="metric-value" id="mTotal">—</div>
+          <div class="metric-sub" id="mTotalSub"></div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Monto neto recibido</div>
+          <div class="metric-value" id="mNeto">—</div>
+          <div class="metric-sub">Después de descontar comisión</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Pago mensual</div>
+          <div class="metric-value" id="mPago">—</div>
+          <div class="metric-sub">Igual a tu renta mensual</div>
+        </div>
+
+        <div class="metric metric-commission">
+          <div class="metric-label">Comisión por apertura</div>
+          <div class="metric-value" id="cbConIva">—</div>
+          <div class="metric-sub" id="cbDetail">—</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    function fmt(n) {
+      return n.toLocaleString('es-MX', {
+        style: 'currency', currency: 'MXN',
+        minimumFractionDigits: 2, maximumFractionDigits: 2
+      });
+    }
+
+    function updateSlider() {
+      $('mesesVal').textContent = $('meses').value;
+    }
+
+    function calcTIR(montoNeto, renta, n) {
+      const MAX_ITER = 200;
+      const TOL = 1e-10;
+      let r = 0.08;
+      for (let i = 0; i < MAX_ITER; i++) {
+        let npv = montoNeto, dnpv = 0;
+        for (let t = 1; t <= n; t++) {
+          const disc = Math.pow(1 + r, t);
+          npv  -= renta / disc;
+          dnpv += (renta * t) / Math.pow(1 + r, t + 1);
+        }
+        if (Math.abs(npv) < TOL) break;
+        if (dnpv === 0) break;
+        r = r - npv / dnpv;
+        if (r < -0.9999) r = 0.0001;
+      }
+      return r;
+    }
+
+    function calculate() {
+      const renta = parseFloat($('renta').value) || 0;
+      const meses = parseInt($('meses').value) || 1;
+
+      if (renta < 1000) {
+        $('catValue').textContent = '—';
+        $('catPct').textContent = '';
+        return;
+      }
+
+      const montoTotal = renta * meses;
+      const comConIva  = montoTotal * 0.16;
+      const comSinIva  = comConIva / 1.16;
+      const iva        = comConIva - comSinIva;
+      const montoNeto  = montoTotal - comConIva;
+      const montoNetoCAT = montoTotal - comSinIva;
+
+      const r   = calcTIR(montoNetoCAT, renta, meses);
+      const cat = (Math.pow(1 + r, 12) - 1) * 100;
+
+      if (Number.isFinite(cat)) {
+        $('catValue').textContent = cat.toFixed(1);
+        $('catPct').textContent   = '%';
+      } else {
+        $('catValue').textContent = '—';
+        $('catPct').textContent   = '';
+      }
+
+      $('mTotal').textContent    = fmt(montoTotal);
+      $('mTotalSub').textContent = `${renta.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0})} × ${meses} mes${meses>1?'es':''}`;
+      $('mNeto').textContent     = fmt(montoNeto);
+      $('mPago').textContent     = fmt(renta);
+      $('cbConIva').textContent  = fmt(comConIva);
+      $('cbDetail').textContent  = `Sin IVA: ${fmt(comSinIva)} + IVA: ${fmt(iva)}`;
+    }
+
+    updateSlider();
+    calculate();
+  </script>
+</body>
+</html>
